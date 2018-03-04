@@ -16,6 +16,23 @@ class Node:
             self.val[ii] += alfa*(i - self.val[ii])
             ii += 1
 
+def indices(lvl):
+    "Manual adjacent indices in grid"
+    xlot = [(1,0,-1,0),
+            (1,-1,-1,1),
+            (0,1,2,2,2,1,0,-1,-2,-2,-2,-1),
+            (3,3,2,1,0,-1,-2,-3,-3,-3,-2,-1,0,1,2,3),
+            (4,4,3,3,2,1,0,-1,-2,-3,-3,-4,-4,-4,-3,-3,-2,-1,0,1,2,3,3,4),
+            ]
+    ylot = [(0,-1,0,1),
+            (1,1,-1,-1),
+            (2,2,1,0,-1,-2,-2,-2,-1,0,1),
+            (0,-1,-2,-3,-3,-3,-2,-1,0,1,2,3,3,3,2,1,0),
+            (0,-1,-2,-3,-3,-4,-4,-4,-3,-3,-2,-1,0,1,2,3,3,4,4,4,3,3,2,1),
+            ]
+    for i in zip(xlot[lvl],ylot[lvl]):
+        yield i           
+            
 class SOM:
     "Grid structure, nodes in lattice, dims are for number of rows and number of columns"
     def __init__(self, f, dim=[10,10], ivar=4, alfa=1.0,dt=30, r=10):
