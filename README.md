@@ -1,2 +1,2 @@
 # som
-A humble version of self organizing map
+A humble implementation of self organizing map 
