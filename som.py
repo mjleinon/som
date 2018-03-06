@@ -6,7 +6,7 @@ class Node:
     def __init__(self, xy, value):
         self.xy = xy
         self.val = value
-        self.owns = np.array([])
+        self.owns = []
             
     def update(self, vector, alfa):
         self.val = alfa*(vector-self.val)
