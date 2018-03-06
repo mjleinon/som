@@ -1,23 +1,19 @@
 
-import math
-import random
-
+import numpy as np
 
 class Node:
     
-    def __init__(self, xy, value=None):
+    def __init__(self, xy, value):
         self.xy = xy
         self.val = value
-        self.owns = []
+        self.owns = np.array([])
+            
+    def update(self, vector, alfa):
+        self.val = alfa*(vector-self.val)
         
-    def update(self, vector, alfa): 
-        ii = 0
-        for i in vector:
-            self.val[ii] += alfa*(i - self.val[ii])
-            ii += 1
-
+    
 def indices(lvl):
-    #Manual adjacent indices in grid
+    "Manual adjacent indices"
     xlot = [(1,0,-1,0),
             (1,-1,-1,1),
             (0,1,2,2,2,1,0,-1,-2,-2,-2,-1),
@@ -31,20 +27,19 @@ def indices(lvl):
             (0,-1,-2,-3,-3,-4,-4,-4,-3,-3,-2,-1,0,1,2,3,3,4,4,4,3,3,2,1),
             ]
     for i in zip(xlot[lvl],ylot[lvl]):
-        yield i           
-            
+        yield i
+
 class SOM:
-    #Grid structure, nodes in lattice, dims are for number of rows and number of columns
-    def __init__(self, f, dim=[10,10], ivar=4, alfa=1.0,dt=30, r=10):
+    "Grid structure, nodes in lattice, dims are for number of rows and number of columns"
+    def __init__(self, dims=(10,10), ivar=4, alfa=1.0, dt=30, r=10):
         
         self.nodes = []
-        self.setup(dim,nvar=ivar,mode="random")
-        self.data = self.file_vectors(f)
+        self.setup(dims,nvar=ivar,mode="random")
         self.alfa = alfa
         self.r = r
         self.dt = dt
        
-    def file_vectors(self, f, first=0,last=5):
+    def get_data(self, f, cols=(0,5)):
         
         txtfile = open(f)
         vectors = []
@@ -53,42 +48,38 @@ class SOM:
             if line == "":
                 break
             s = line.split()
-            vectors.append(s[first:last])
-        return vectors
+            vectors.append(s[cols[0]:cols[1]])
+        self.data = vectors
               
     def train(self,last=4):
         
         i = 1
         for row in self.data:
-            vec = [float(xx) for xx in row[0:last]]
+            vec = np.array([float(xx) for xx in row[0:last]])
             self.winner(vec,indx=i)
             i += 1
             
-    def setup(self, dim, nvar=4, rr=[-0.5,0.5], mode="random"):
+    def setup(self, dims, nvar=4, scale=1, mode="random"):
         
-        for row in range(0,dim[0]):
+        for row in range(0,dims[0]):
             self.nodes.append([])
-        
-        if mode in ("pca","slope"):
-            scale = 10.0
             
-        for i in range(0,dim[0]):
-            for j in range(0,dim[1]):
+        for i in range(0,dims[0]):
+            for j in range(0,dims[1]):
                 if mode == "random":
-                    valv = [random.uniform(rr[0],rr[1]) for x in range(0,nvar)]
-                    valv = [round(xx,4) for xx in valv] 
+                    valv = np.random.rand(nvar)*scale
                     self.nodes[i].append(Node(xy=[i,j],value=valv))    
                 elif mode=="slope":
-                    valv = [(i+scale*j)]*nvar         
+                    valv = range(i+j,i+j+nvar)         
                     self.nodes[i].append(Node(xy=[i,j],value=valv))                
      
      
     def dgrid(self, node1, node2):
-        #distance of two node-coordinates in the map
+        "distance of two node-coordinates in the map"
         return map(lambda one,two: one-two,node1.xy,node2.xy) 
     
     def distance(self, v1, v2, dtype="euclid"):
-        #distance of two vectors in input space
+        "distance of two vectors in input space"
         summa = 0
         i = 0  
         while True:
@@ -101,12 +92,12 @@ class SOM:
             i += 1
             
         if dtype == "euclid":
-            return math.sqrt(summa)    
+            return np.sqrt(summa)    
         else:
             return summa
     
     def winner(self, vector, first=0, last=4, indx=1):
-        #chooses the closest map node to input vector and pulls its neighbours
+        "chooses the closest map node to input vector and pulls its neighbours"
         mindist = self.distance(self.nodes[0][0].val[first:last], vector)
         winner = self.nodes[0][0]
         imin = [0,0]
@@ -128,7 +119,7 @@ class SOM:
         #return winner,imin        
     
     def get_node(self,i,j):
-        #returns a map node
+        "returns a map node"
         if i<0 or j<0:
             return None
         try:
@@ -138,13 +129,13 @@ class SOM:
             return None
     
     def alfa_func(self,t,r):
-        
+        "pull function coefficient decreasing with time and radius"
         n = len(self.data)
         alfa = self.alfa
-        return math.exp(-r/self.r)*math.exp(-t/n)*alfa
+        return np.exp(-r/self.r)*np.exp(-t/n)*alfa
     
     def pull(self,vector,node,indx):
-        #pulls nearby nodes in in the map in the direction of a vector
+        "pulls nearby nodes in in the map in the direction of a vector, time runs with input data index"
         n = len(self.data)
         t = n-indx
         nlvl = abs(divmod(t,self.dt)[0]+1)
@@ -157,16 +148,16 @@ class SOM:
         
         for lvl in lvls:
             for ind in indices(lvl):
+                i,j = x+ind[0],y+ind[1]
+                r = np.sqrt(ind[0]**2+ind[1]**2)
+                alfa_val = self.alfa_func(t,r)
                 try:
-                    i,j = x+ind[0],y+ind[1]
-                    r = math.sqrt(ind[0]**2+ind[1]**2)
-                    alfa_val = self.alfa_func(t,r)
                     self.nodes[i][j].update(vector,alfa_val)
                 except:
                     pass
      
     def strmap(self,vecs=True):
-        #list of node vectors 
+        "list of node vectors or input indices belonging to node vectors"
         rstring = ""
         for row in self.nodes:
             scol = ""
@@ -180,4 +171,4 @@ class SOM:
                         rstring += " "+str(i)+","
             rstring += " "+str(scol)+"\n"
             rstring += "-- \n"
-        return rstring  
+        return rstring     
