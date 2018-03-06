@@ -1,5 +1,6 @@
 import som.py
 
-kohonen = SOM("iris.txt",dim=[5,5]) 
-kohonen.train() 
-print(kohonen.strmap(False))
+k = SOM()
+k.get_data("iris.txt")
+k.train()
+print(k.strmap())
