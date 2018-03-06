@@ -17,7 +17,7 @@ class Node:
             ii += 1
 
 def indices(lvl):
-    "Manual adjacent indices in grid"
+    #Manual adjacent indices in grid
     xlot = [(1,0,-1,0),
             (1,-1,-1,1),
             (0,1,2,2,2,1,0,-1,-2,-2,-2,-1),
@@ -34,7 +34,7 @@ def indices(lvl):
         yield i           
             
 class SOM:
-    "Grid structure, nodes in lattice, dims are for number of rows and number of columns"
+    #Grid structure, nodes in lattice, dims are for number of rows and number of columns
     def __init__(self, f, dim=[10,10], ivar=4, alfa=1.0,dt=30, r=10):
         
         self.nodes = []
@@ -84,11 +84,11 @@ class SOM:
      
      
     def dgrid(self, node1, node2):
-        "distance of two node-coordinates in the map"
+        #distance of two node-coordinates in the map
         return map(lambda one,two: one-two,node1.xy,node2.xy) 
     
     def distance(self, v1, v2, dtype="euclid"):
-        "distance of two vectors in input space"
+        #distance of two vectors in input space
         summa = 0
         i = 0  
         while True:
@@ -106,7 +106,7 @@ class SOM:
             return summa
     
     def winner(self, vector, first=0, last=4, indx=1):
-        "chooses the closest map node to input vector and pulls its neighbours"
+        #chooses the closest map node to input vector and pulls its neighbours
         mindist = self.distance(self.nodes[0][0].val[first:last], vector)
         winner = self.nodes[0][0]
         imin = [0,0]
@@ -128,7 +128,7 @@ class SOM:
         #return winner,imin        
     
     def get_node(self,i,j):
-        "returns a map node"
+        #returns a map node
         if i<0 or j<0:
             return None
         try:
@@ -144,7 +144,7 @@ class SOM:
         return math.exp(-r/self.r)*math.exp(-t/n)*alfa
     
     def pull(self,vector,node,indx):
-        "pulls nearby nodes in in the map in the direction of a vector"
+        #pulls nearby nodes in in the map in the direction of a vector
         n = len(self.data)
         t = n-indx
         nlvl = abs(divmod(t,self.dt)[0]+1)
@@ -166,7 +166,7 @@ class SOM:
                     pass
      
     def strmap(self,vecs=True):
-        "list of node vectors "
+        #list of node vectors 
         rstring = ""
         for row in self.nodes:
             scol = ""
