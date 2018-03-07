@@ -9,7 +9,7 @@ class Node:
         self.owns = []
             
     def update(self, vector, alfa):
-        self.val = alfa*(vector-self.val)
+        self.val += alfa*(vector-self.val)
         
     
 def indices(lvl):
@@ -79,45 +79,30 @@ class SOM:
         return map(lambda one,two: one-two,node1.xy,node2.xy) 
     
     def distance(self, v1, v2, dtype="euclid"):
-        "distance of two vectors in input space"
-        summa = 0
-        i = 0  
-        while True:
-            if i > len(v1)-1:
-                break      
-            if dtype == "euclid":
-                summa += (v1[i]-v2[i])**2
-            elif dtype == "manhattan":
-                summa += abs(v1[i]-v2[i])
-            i += 1
-            
-        if dtype == "euclid":
-            return np.sqrt(summa)    
-        else:
-            return summa
-    
+        if dtype == "euclid":return(np.sqrt(sum((v1-v2)**2)))
+        elif dtype == "manhattan":return(sum(abs(v1-v2)))
+        else:return 0
+        
     def winner(self, vector, first=0, last=4, indx=1):
         "chooses the closest map node to input vector and pulls its neighbours"
-        mindist = self.distance(self.nodes[0][0].val[first:last], vector)
-        winner = self.nodes[0][0]
+        mindist = self.distance(self.nodes[0][0].val, np.array(vector))
         imin = [0,0]
         
-        for col in self.nodes:
-            for node in col:
-                d = self.distance(node.val[first:last+1], vector)
+        for row in self.nodes:
+            for node in row:
+                d = self.distance(node.val, np.array(vector))
                 if d < mindist:
                     mindist = d
-                    winner = node
                     imin = node.xy
                 else:
                     pass
         
-        self.nodes[imin[0]][imin[1]].owns += [indx]
+        self.nodes[imin[0]][imin[1]].owns.append(indx)
         #self.nodes[imin[0]][imin[1]].owns.append(vector)
-        self.pull(vector,winner,indx)
+        self.pull(vector,imin,indx)
                       
         #return winner,imin        
-    
+             
     def get_node(self,i,j):
         "returns a map node"
         if i<0 or j<0:
@@ -134,19 +119,16 @@ class SOM:
         alfa = self.alfa
         return np.exp(-r/self.r)*np.exp(-t/n)*alfa
     
-    def pull(self,vector,node,indx):
+    def pull(self,vector,xy,indx):
         "pulls nearby nodes in in the map in the direction of a vector, time runs with input data index"
-        n = len(self.data)
-        t = n-indx
+        t = len(self.data)-indx
         nlvl = abs(divmod(t,self.dt)[0]+1)
         
-        x,y = node.xy[0],node.xy[1]
-        alfa_val = self.alfa_func(t,0.01)
+        x,y = xy[0],xy[1]
+        alfa_val = self.alfa_func(t,1)
         self.nodes[x][y].update(vector,alfa_val)
-        
-        lvls = range(0,n)[0:nlvl]
-        
-        for lvl in lvls:
+              
+        for lvl in range(0,nlvl):
             for ind in indices(lvl):
                 i,j = x+ind[0],y+ind[1]
                 r = np.sqrt(ind[0]**2+ind[1]**2)
