@@ -50,6 +50,7 @@ class SOM:
             s = line.split()
             vectors.append(s[cols[0]:cols[1]])
         self.data = vectors
+        txtfile.close()
               
     def train(self,last=4):
         
