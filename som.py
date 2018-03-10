@@ -134,10 +134,11 @@ class SOM:
                 i,j = x+ind[0],y+ind[1]
                 r = np.sqrt(ind[0]**2+ind[1]**2)
                 alfa_val = self.alfa_func(t,r)
-                try:
-                    self.nodes[i][j].update(vector,alfa_val)
-                except:
-                    pass
+                if i>0 and j>0:
+                    try:
+                        self.nodes[i][j].update(vector,alfa_val)
+                    except:
+                        pass
      
     def strmap(self,vecs=True):
         "list of node vectors or input indices belonging to node vectors"
