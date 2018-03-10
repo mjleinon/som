@@ -15,13 +15,13 @@ def indices(lvl):
   
   pi = np.pi
   r = 1
-  n = 2
+  n = 1
   
   for i in range(lvl):
     a = 0
     increment = (2*np.pi)/(4*n)
-    for a in range(1,4*n):
-      yield np.ceil(r*np.cos(a)),np.ceil(r*np.sin(a))
+    for a in range(1,4*n-1):
+      yield np.floor(r*np.cos(a)),np.floor(r*np.sin(a))
       a = a + increment
     r += 1
     n += 1
