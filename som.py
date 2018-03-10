@@ -10,24 +10,21 @@ class Node:
             
     def update(self, vector, alfa):
         self.val += alfa*(vector-self.val)
-        
-    
+                
 def indices(lvl):
-    "Manual adjacent indices"
-    xlot = [(1,0,-1,0),
-            (1,-1,-1,1),
-            (0,1,2,2,2,1,0,-1,-2,-2,-2,-1),
-            (3,3,2,1,0,-1,-2,-3,-3,-3,-2,-1,0,1,2,3),
-            (4,4,3,3,2,1,0,-1,-2,-3,-3,-4,-4,-4,-3,-3,-2,-1,0,1,2,3,3,4),
-            ]
-    ylot = [(0,-1,0,1),
-            (1,1,-1,-1),
-            (2,2,1,0,-1,-2,-2,-2,-1,0,1),
-            (0,-1,-2,-3,-3,-3,-2,-1,0,1,2,3,3,3,2,1,0),
-            (0,-1,-2,-3,-3,-4,-4,-4,-3,-3,-2,-1,0,1,2,3,3,4,4,4,3,3,2,1),
-            ]
-    for i in zip(xlot[lvl],ylot[lvl]):
-        yield i
+  
+  pi = np.pi
+  r = 1
+  n = 2
+  
+  for i in range(lvl):
+    a = 0
+    increment = (2*np.pi)/(4*n)
+    for a in range(1,4*n):
+      yield np.ceil(r*np.cos(a)),np.ceil(r*np.sin(a))
+      a = a + increment
+    r += 1
+    n += 1
 
 class SOM:
     "Grid structure, nodes in lattice, dims are for number of rows and number of columns"
