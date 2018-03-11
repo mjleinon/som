@@ -3,28 +3,27 @@ import numpy as np
 
 class Node:
     
-    def __init__(self, xy, value):
+    def __init__(self, xy, weight):
         self.xy = xy
-        self.val = value
+        self.weight = weight
         self.owns = []
             
     def update(self, vector, alfa):
-        self.val += alfa*(vector-self.val)
+        self.weight += alfa*(vector-self.weight)
                 
-def indices(lvl):
-  
-  pi = np.pi
-  r = 1
-  n = 1
-  
-  for i in range(lvl):
-    a = 0
-    increment = (2*np.pi)/(4*n)
-    for a in range(1,4*n-1):
-      yield np.floor(r*np.cos(a)),np.floor(r*np.sin(a))
-      a = a + increment
-    r += 1
-    n += 1
+def indices(r):
+    
+    r = max(r,2)
+    quart = [(0,1),(1,0),(0,1),(1,0)]
+    i = 0
+    
+    for xsign,ysign in zip((1,-1,-1,1),(1,1,-1,-1)):     
+        for x in range(quart[i][0],r):
+            y = np.round(np.sqrt(r**2-x**2))
+            for yi in range(quart[i][1],int(y)):
+                yield (x*xsign,yi*ysign)
+        i += 1
+        
 
 class SOM:
     "Grid structure, nodes in lattice, dims are for number of rows and number of columns"
@@ -65,11 +64,11 @@ class SOM:
         for i in range(0,dims[0]):
             for j in range(0,dims[1]):
                 if mode == "random":
-                    valv = np.random.rand(nvar)*scale
-                    self.nodes[i].append(Node(xy=[i,j],value=valv))    
+                    vec = np.random.rand(nvar)*scale
+                    self.nodes[i].append(Node(xy=[i,j],weight=vec))    
                 elif mode=="slope":
-                    valv = range(i+j,i+j+nvar)         
-                    self.nodes[i].append(Node(xy=[i,j],value=valv))                
+                    vec = range(i+j,i+j+nvar)         
+                    self.nodes[i].append(Node(xy=[i,j],weight=vec))                
      
      
     def dgrid(self, node1, node2):
@@ -88,7 +87,7 @@ class SOM:
         
         for row in self.nodes:
             for node in row:
-                d = self.distance(node.val, np.array(vector))
+                d = self.distance(node.weight, np.array(vector))
                 if d < mindist:
                     mindist = d
                     imin = node.xy
@@ -129,9 +128,9 @@ class SOM:
         for lvl in range(0,nlvl):
             for ind in indices(lvl):
                 i,j = x+ind[0],y+ind[1]
-                r = np.sqrt(ind[0]**2+ind[1]**2)
-                alfa_val = self.alfa_func(t,r)
                 if i>0 and j>0:
+                    r = np.sqrt(ind[0]**2+ind[1]**2)
+                    alfa_val = self.alfa_func(t,r)
                     try:
                         self.nodes[i][j].update(vector,alfa_val)
                     except:
@@ -145,7 +144,7 @@ class SOM:
             for node in row:
                 rstring += ";"
                 if vecs:
-                    for dim in node.val:
+                    for dim in node.weight:
                         rstring += " "+str(dim)+","
                 else:
                     for i in node.owns:
