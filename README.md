@@ -6,6 +6,8 @@ Grid or SOM consists of nodes...
 
 plotsom.py includes utilities to create plots over dimension pairs of data and network neuron values
 
+required libraries: numpy and matplotlib.pyplot for plots (written with versions 1.14.2 and 2.2.2 (matplotlib) respectively)
+
 
 
 
