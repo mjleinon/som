@@ -63,12 +63,12 @@ class SOMNetwork:
             for j in range(len(self.nodes[i])):
                 self.nodes[i][j].owns = []
         
-    def get_data(self, f, cols=(0,4)):
+    def get_data(self, f, cols=(0,4), sepr=" "):
         "gets data from file and sets up nodes into their initial position"
         vectors = []
         with open(f) as txtfile:
             for line in txtfile: 
-                s = line.split()
+                s = line.split(sepr)
                 row = s[cols[0]:cols[1]]
                 vectors.append([float(x) for x in row])
         txtfile.close()
