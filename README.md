@@ -5,11 +5,11 @@ In this repository Self organized map a.k.a Kohonen network implemented as two c
 Nodes which have vector values in input space and indices of input data rows which they "own" and 
 SOMNEtworks which consists of neuron-nodes to which datapoints are assigned in training.
 
-plotsom.py includes utilities to create plots over dimension pairs of data and network neuron values
+Plotsom.py includes utilities to create plots over dimension pairs of data and network neuron values
 
-required libraries: numpy and matplotlib.pyplot for plots (written with versions 1.14.2 and 2.2.2 (matplotlib) respectively)
+Required libraries: numpy and matplotlib.pyplot for plots (written with versions 1.14.2 and 2.2.2 (matplotlib) respectively)
 
-example of plotsom.py:
+Example of plotsom.py:
 
 ![alt text](https://github.com/mjleinon/som/blob/master/plotexample.png)
 
