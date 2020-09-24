@@ -3,27 +3,35 @@ import numpy as np
 
 class Node:
     
-    def __init__(self, xy, weight):
+    def __init__(self, xy, value):
         self.xy = xy
-        self.weight = weight
+        self.val = value
         self.owns = []
             
     def update(self, vector, alfa):
-        self.weight += alfa*(vector-self.weight)
-                
-def indices(r):
+        self.val += alfa*(vector-self.val)
+        
     
+def indices_circle(r):
     r = max(r,2)
     quart = [(0,1),(1,0),(0,1),(1,0)]
     i = 0
-    
     for xsign,ysign in zip((1,-1,-1,1),(1,1,-1,-1)):     
         for x in range(quart[i][0],r):
             y = np.round(np.sqrt(r**2-x**2))
             for yi in range(quart[i][1],int(y)):
                 yield (x*xsign,yi*ysign)
         i += 1
-        
+
+def indices_square(r):
+    r = max(r,2)
+    quart = [(0,1),(1,0),(0,1),(1,0)]
+    i = 0
+    for xsign,ysign in zip((1,-1,-1,1),(1,1,-1,-1)):     
+        for x in range(quart[i][0],r):
+            for y in range(quart[i][1],r):
+                yield (x*xsign,y*ysign)
+        i += 1
 
 class SOMNetwork:
     """
