@@ -1,6 +1,6 @@
-import som.py
+from som import *
 
-k = SOM()
+k = SOMNetwork()
 k.get_data("iris.txt")
 k.train()
 print(k.strmap())
