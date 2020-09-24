@@ -9,6 +9,9 @@ plotsom.py includes utilities to create plots over dimension pairs of data and n
 
 required libraries: numpy and matplotlib.pyplot for plots (written with versions 1.14.2 and 2.2.2 (matplotlib) respectively)
 
+example of plotsom.py:
+![alt text](https://github.com/mjleinon/som/blob/master/plotexample.png)
+
 
 
 
