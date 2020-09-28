@@ -2,7 +2,7 @@ from som import *
 from plotsom import *
 
 k = SOMNetwork()
-k.get_data("iris.txt")
+k.get_data_from_file("iris.txt")
 k.train()
 
 "plot examples over dimension pairs:"
