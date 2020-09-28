@@ -79,6 +79,14 @@ class SOMNetwork:
         self.setup(self.dims,self.nvar,mode=self.setup_mode)
         
         self.n = len(self.data)
+        
+    def set_data(self, dataset):
+        self.data = list(dataset)
+        self.data_array = np.array(self.data)
+        self.data_set_metrics()
+        self.setup(self.dims,self.nvar,mode=self.setup_mode)
+        
+        self.n = len(self.data)
               
               
     def train(self,last=4,n_epochs=25,save_history=False):
