@@ -86,6 +86,8 @@ class SOMNetwork:
         
         self.history = []
         
+        last = min(last,len(self.data[0]))
+        
         for epoch in range(n_epochs):
             i = 1
             self.clear_assignments()
@@ -101,6 +103,8 @@ class SOMNetwork:
         
         for row in range(dims[0]):
             self.nodes.append([])
+            
+        nvar = min(nvar,len(self.data[0]))
             
         for i in range(0,dims[0]):
             for j in range(0,dims[1]):
@@ -141,7 +145,7 @@ class SOMNetwork:
                 pass
         
         self.nodes[imin[0]][imin[1]].owns.append(indx)
-        self.pull_alt(vector,imin,indx)  
+        self.pull(vector,imin,indx)  
     
     def get_node(self,i,j):
         "returns a map node"
